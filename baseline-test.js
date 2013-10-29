@@ -50,9 +50,9 @@ var BaselineTest = (function () {
                 return 'already correct';
             }
             proposeHeightPx = ((Math.ceil(propose /
-                BaselineTest.settings.desiredBaseline)) *
-                BaselineTest.settings.desiredBaseline);
-            proposeHeightMult = proposeHeightPx / BaselineTest.calcFontSize(current);
+                this.settings.desiredBaseline)) *
+                this.settings.desiredBaseline);
+            proposeHeightMult = proposeHeightPx / this.calcFontSize(current);
             if ((proposeHeightMult * 1000) === Math.ceil(proposeHeightMult * 1000)) {
                 // If Multiplier height isnt crazy use that.
                 // (max of three decimal places)
