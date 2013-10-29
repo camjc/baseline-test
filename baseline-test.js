@@ -7,7 +7,7 @@
                 // Define what tags to run it on, and what baseline we are trying to achieve.
                 tags: ['h1', 'h2', 'h3', 'p', 'small', 'li', 'tc', 'span'],
                 desiredBaseline: 18,
-                container: '.container'
+                container: 'body'
             },
             init: function () {
                 var i = 0,
@@ -28,6 +28,7 @@
             },
             getCurrent: function (container, tag) {
                 return document.querySelectorAll(container + " " + tag)[0];
+                //Should change to .body.querySelector() for efficiency
             },
             calcHeight: function (current) {
                 var height;
