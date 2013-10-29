@@ -14,14 +14,14 @@
                     tags = this.settings.tags,
                     current;
                 while (i < tags.length) {
-                    current = this.getCurrent(this.settings.container, tags[i]);
+                    current = this.utilSelector(this.settings.container, tags[i]);
                     if (current !== undefined) {
                         // Can only read inline element's height if they
                         // are inline blocks, this converts them.
                         if (window.getComputedStyle(current).display === 'inline') {
                             current.style.display = 'inline-block';
                         }
-                        this.consoleOutput(tags[i], current);
+                        this.displayOutput(tags[i], current);
                     }
                     i += 1;
                 }
@@ -30,9 +30,33 @@
                 //Remove the units and then convert to a number from a string.
                 return parseInt(input.replace('px', ''), 10);
             },
-            getCurrent: function (container, tag) {
+            utilCheck: function (input) {
+                if (input %
+                        this.settings.desiredBaseline === 0 || input === 0) {
+                    return true;
+                }
+                return false;
+            },
+            utilSelector: function (container, tag) {
                 return document.querySelectorAll(container + " " + tag)[0];
                 //Should change to .body.querySelector() for efficiency
+            },
+            utilPropose: function (check, propose, current, unit) {
+                var proposeHeightPx,
+                    proposeHeightMult;
+                if (check === true) {
+                    return 'already correct';
+                }
+                proposeHeightPx = ((Math.ceil(propose /
+                    BaselineTest.settings.desiredBaseline)) *
+                    BaselineTest.settings.desiredBaseline);
+                proposeHeightMult = proposeHeightPx / BaselineTest.calcFontSize(current);
+                if ((proposeHeightMult * 1000) === Math.ceil(proposeHeightMult * 1000)) {
+                    // If Multiplier height isnt crazy use that.
+                    // (max of three decimal places)
+                    return proposeHeightMult + unit;
+                }
+                return proposeHeightPx + 'px (ideally change the font-size first)';
             },
             calcHeight: function (current) {
                 var height;
@@ -46,16 +70,12 @@
                 return this.utilPx(window.getComputedStyle(current).fontSize);
             },
             calcLineHeight: function (current) {
-                var lineheight,
-                    height,
-                    fontsize;
+                var lineheight;
                 lineheight = window.getComputedStyle(current).lineHeight;
                 if (lineheight !== 'normal') {
                     return lineheight;
                 }
-                height = this.calcHeight(current);
-                fontsize = this.calcFontSize(current);
-                lineheight = height / fontsize;
+                lineheight = this.calcHeight(current) / this.calcFontSize(current);
                 return lineheight;
             },
             calcPaddingTop: function (current) {
@@ -82,18 +102,10 @@
                 return false;
             },
             paddingTop: function (current) {
-                if (this.calcPaddingTop(current) %
-                        this.settings.desiredBaseline === 0 || this.calcPaddingTop(current) === 0) {
-                    return true;
-                }
-                return false;
+                return this.utilCheck(this.calcPaddingTop(current));
             },
             paddingBottom: function (current) {
-                if (this.calcPaddingBottom(current) %
-                        this.settings.desiredBaseline === 0 || this.calcPaddingBottom(current) === 0) {
-                    return true;
-                }
-                return false;
+                return this.utilCheck(this.calcPaddingBottom(current));
             },
             checkPadding: function (current) {
                 if (this.paddingTop(current) && this.paddingBottom(current)) {
@@ -108,18 +120,10 @@
                 return false;
             },
             marginTop: function (current) {
-                if (this.calcMarginTop(current) %
-                        this.settings.desiredBaseline === 0 || this.calcMarginTop(current) === 0) {
-                    return true;
-                }
-                return false;
+                return this.utilCheck(this.calcMarginTop(current));
             },
             marginBottom: function (current) {
-                if (this.calcMarginBottom(current) %
-                        this.settings.desiredBaseline === 0 || this.calcMarginBottom(current) === 0) {
-                    return true;
-                }
-                return false;
+                return this.utilCheck(this.calcPaddingBottom(current));
             },
             checkMargin: function (current) {
                 if (this.marginTop(current) && this.marginBottom(current)) {
@@ -134,21 +138,13 @@
                 return false;
             },
             proposeHeight: function (current) {
-                var proposeHeightPx,
-                    proposeHeightMult;
-                if (this.checkBaseline(current) === true) {
-                    return 'already correct';
-                }
-                proposeHeightPx = ((Math.ceil(this.calcHeight(current) /
-                    this.settings.desiredBaseline)) *
-                    this.settings.desiredBaseline);
-                proposeHeightMult = proposeHeightPx / this.calcFontSize(current);
-                if ((proposeHeightMult * 1000) === Math.ceil(proposeHeightMult * 1000)) {
-                    // If Multiplier height isnt crazy use that.
-                    // (max of three decimal places)
-                    return proposeHeightMult;
-                }
-                return proposeHeightPx + 'px (ideally change the font-size first)';
+                return this.utilPropose(this.checkBaseline(current), this.calcHeight(current), current, '');
+            },
+            proposePaddingTop: function (current) {
+                return this.utilPropose(this.checkPadding(current), this.calcPaddingTop(current), current, 'em');
+            },
+            proposePaddingBottom: function (current) {
+                return this.utilPropose(this.checkPadding(current), this.calcPaddingBottom(current), current, 'em');
             },
             consoleOutput: function (tag, current) {
                 console.log(tag + ' is ' + this.calcHeight(current) + 'px high' +
@@ -157,12 +153,15 @@
                     ', and the line-height is ' + this.calcLineHeight(current) +
                     ', a match is ' + this.checkBaseline(current) +
                     ', and a margin match is ' + this.checkMargin(current) +
-                    ', and a padding match is ' + this.checkPadding(current));
+                    ', and a padding match is ' + this.checkPadding(current) +
+                    ', recommended top-padding is ' + this.proposePaddingTop(current));
             },
             displayOutput: function (tag, current) {
                 this.checkBaseline(current);
                 this.checkMargin(current);
+                console.log(tag + ' recommended top-padding is ' + this.proposePaddingTop(current));
                 console.log(tag + ' recommended line-height is ' + this.proposeHeight(current));
+                console.log(tag + ' recommended bottom-padding is ' + this.proposePaddingBottom(current));
             }
         };
     BaselineTest.init(); // Call itself
