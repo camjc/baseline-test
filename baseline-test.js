@@ -6,7 +6,7 @@
             settings: {
                 // Define what tags to run it on, and what baseline we are trying to achieve.
                 tags: ['h1', 'h2', 'h3', 'p', 'small', 'li', 'tc', 'span'],
-                desiredBaseline: 11
+                desiredBaseline: 18
             },
             init: function () {
                 var i = 0,
@@ -16,6 +16,11 @@
                     current = this.getCurrent(tags[i]);
                     if (current === undefined) {
                         return null;
+                    }
+                    // Can only read inline element's height if they
+                    // are inline blocks, this converts them.
+                    if (window.getComputedStyle(current).display === "inline") {
+                        current.style.display = "inline-block";
                     }
                     this.displayOutput(tags[i], current);
                     i += 1;
@@ -94,18 +99,18 @@
             },
             proposeHeight: function (current) {
                 var proposeHeightPx,
-                    proposeHeightEm;
+                    proposeHeightMult;
                 if (this.checkBaseline(current) === true) {
                     return "already correct";
                 }
                 proposeHeightPx = ((Math.ceil(this.calcHeight(current) /
                     this.settings.desiredBaseline)) *
                     this.settings.desiredBaseline);
-                proposeHeightEm = proposeHeightPx / this.calcFontSize(current);
-                if ((proposeHeightEm * 1000) === Math.ceil(proposeHeightEm * 1000)) {
-                    // If EM height isnt crazy use that.
-                    // (max of three decimal places EM value)
-                    return proposeHeightEm + 'em';
+                proposeHeightMult = proposeHeightPx / this.calcFontSize(current);
+                if ((proposeHeightMult * 1000) === Math.ceil(proposeHeightMult * 1000)) {
+                    // If Multiplier height isnt crazy use that.
+                    // (max of three decimal places)
+                    return proposeHeightMult;
                 }
                 return proposeHeightPx + 'px';
             },
@@ -128,3 +133,4 @@
 }());
 
 // Report everything as EMs
+// Handle padding
