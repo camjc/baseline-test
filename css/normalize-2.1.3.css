@@ -414,8 +414,8 @@ h1, h2, p{
 }
 
 small{
+  display: inline-block;
   line-height: 22px;
-  /* not sure why this doesnt work */
 }
 
 /**, body, h1 {margin: 0;}

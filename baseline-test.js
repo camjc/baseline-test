@@ -3,15 +3,21 @@
 // Wrap in self executing function so it doesn't pollute global.
     'use strict';
     var BaselineTest = {
-            settings: { // Define what tags to run it on, and what baseline we are trying to achieve.
+            settings: {
+                // Define what tags to run it on, and what baseline we are trying to achieve.
                 tags: ['h1', 'h2', 'h3', 'p', 'small', 'li', 'tc', 'span'],
                 desiredBaseline: 11
             },
             init: function () {
-                var i = 0;
-                // s = this.settings;
-                while (i < this.settings.tags.length) {
-                    this.consoleOutput(this.settings.tags[i]);
+                var i = 0,
+                    tags = this.settings.tags,
+                    current;
+                while (i < tags.length) {
+                    current = this.getCurrent(tags[i]);
+                    if (current === undefined) {
+                        return null;
+                    }
+                    this.displayOutput(tags[i], current);
                     i += 1;
                 }
             },
@@ -87,16 +93,23 @@
                 return false;
             },
             proposeHeight: function (current) {
+                var proposeHeightPx,
+                    proposeHeightEm;
                 if (this.checkBaseline(current) === true) {
-                    return true;
+                    return "already correct";
                 }
-                return (Math.ceil(this.calcHeight(current) / this.settings.desiredBaseline) * this.settings.desiredBaseline) / this.calcFontSize(current);
+                proposeHeightPx = ((Math.ceil(this.calcHeight(current) /
+                    this.settings.desiredBaseline)) *
+                    this.settings.desiredBaseline);
+                proposeHeightEm = proposeHeightPx / this.calcFontSize(current);
+                if ((proposeHeightEm * 1000) === Math.ceil(proposeHeightEm * 1000)) {
+                    // If EM height isnt crazy use that.
+                    // (max of three decimal places EM value)
+                    return proposeHeightEm + 'em';
+                }
+                return proposeHeightPx + 'px';
             },
-            consoleOutput: function (tag) {
-                var current = this.getCurrent(tag);
-                if (current === undefined) {
-                    return null;
-                }
+            consoleOutput: function (tag, current) {
                 console.log(tag + ' is ' + this.calcHeight(current) + 'px high' +
                     ', I propose a line height of ' + this.proposeHeight(current) +
                     ', and its font-size is ' + this.calcFontSize(current) + 'px ' +
@@ -105,14 +118,10 @@
                     ', and its top margin is ' + this.calcMarginTop(current) +
                     ', and a margin match is ' + this.checkMargin(current));
             },
-            displayOutput: function (tag) {
-                var current = this.getCurrent(tag);
-                if (current === undefined) {
-                    return null;
-                }
+            displayOutput: function (tag, current) {
                 this.checkBaseline(current);
                 this.checkMargin(current);
-                console.log(this.proposeHeight(current));
+                console.log(tag + ' recommended line-height is ' + this.proposeHeight(current));
             }
         };
     BaselineTest.init(); // Call itself
