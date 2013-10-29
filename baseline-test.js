@@ -19,14 +19,15 @@ var BaselineTest = (function () {
         },
         check: function (tag) {
             var current = this.utilSelector(this.settings.container, tag);
-            if (current !== undefined) {
-                // Can only read inline element's height if they
-                // are inline blocks, this converts them.
-                if (window.getComputedStyle(current).display === 'inline') {
-                    current.style.display = 'inline-block';
-                }
-                this.displayOutput(tag, current);
+            if (current === undefined) {
+                return "That element doesn't exist on this page.";
             }
+            // Can only read inline element's height if they
+            // are inline blocks, this converts them.
+            if (window.getComputedStyle(current).display === 'inline') {
+                current.style.display = 'inline-block';
+            }
+            return this.displayOutput(tag, current);
         },
         utilPx: function (input) {
             //Remove the units and then convert to a number from a string.
@@ -47,7 +48,7 @@ var BaselineTest = (function () {
             var proposeHeightPx,
                 proposeHeightMult;
             if (check === true) {
-                return 'already correct';
+                return 'true';
             }
             proposeHeightPx = ((Math.ceil(propose /
                 this.settings.desiredBaseline)) *
@@ -58,7 +59,12 @@ var BaselineTest = (function () {
                 // (max of three decimal places)
                 return proposeHeightMult + unit;
             }
-            return proposeHeightPx + 'px (ideally change the font-size first)';
+            return proposeHeightPx + 'px /* ideally change the font-size first */';
+        },
+        utilPrinter: function (tag, name, what) {
+            if (what !== 'true') {
+                return console.log(tag + '{ ' + name + ': ' + what + ';}');
+            }
         },
         calcHeight: function (current) {
             var height;
@@ -148,6 +154,12 @@ var BaselineTest = (function () {
         proposePaddingBottom: function (current) {
             return this.utilPropose(this.checkPadding(current), this.calcPaddingBottom(current), current, 'em');
         },
+        proposeMarginTop: function (current) {
+            return this.utilPropose(this.checkMargin(current), this.calcMarginTop(current), current, 'em');
+        },
+        proposeMarginBottom: function (current) {
+            return this.utilPropose(this.checkMargin(current), this.calcMarginBottom(current), current, 'em');
+        },
         consoleOutput: function (tag, current) {
             console.log(tag + ' is ' + this.calcHeight(current) + 'px high' +
                 ', I propose a line height of ' + this.proposeHeight(current) +
@@ -161,9 +173,11 @@ var BaselineTest = (function () {
         displayOutput: function (tag, current) {
             this.checkBaseline(current);
             this.checkMargin(current);
-            console.log(tag + ' recommended top-padding is ' + this.proposePaddingTop(current));
-            console.log(tag + ' recommended line-height is ' + this.proposeHeight(current));
-            console.log(tag + ' recommended bottom-padding is ' + this.proposePaddingBottom(current));
+            this.utilPrinter(tag, 'margin-top', this.proposeMarginTop(current));
+            this.utilPrinter(tag, 'padding-top', this.proposePaddingTop(current));
+            this.utilPrinter(tag, 'line-height', this.proposeHeight(current));
+            this.utilPrinter(tag, 'padding-bottom', this.proposePaddingBottom(current));
+            this.utilPrinter(tag, 'margin-bottom', this.proposeMarginBottom(current));
         }
     };
 }());
