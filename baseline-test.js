@@ -6,7 +6,7 @@
             settings: {
                 // Define what tags to run it on, and what baseline we are trying to achieve.
                 tags: ['h1', 'h2', 'h3', 'p', 'small', 'li', 'tc', 'span'],
-                desiredBaseline: 18,
+                desiredBaseline: 16,
                 container: 'body'
             },
             init: function () {
@@ -21,10 +21,14 @@
                         if (window.getComputedStyle(current).display === 'inline') {
                             current.style.display = 'inline-block';
                         }
-                        this.displayOutput(tags[i], current);
+                        this.consoleOutput(tags[i], current);
                     }
                     i += 1;
                 }
+            },
+            utilPx: function (input) {
+                //Remove the units and then convert to a number from a string.
+                return parseInt(input.replace('px', ''), 10);
             },
             getCurrent: function (container, tag) {
                 return document.querySelectorAll(container + " " + tag)[0];
@@ -33,11 +37,13 @@
             calcHeight: function (current) {
                 var height;
                 height = current.getBoundingClientRect().bottom -
-                    current.getBoundingClientRect().top;
+                    current.getBoundingClientRect().top -
+                    this.calcPaddingTop(current) -
+                    this.calcPaddingBottom(current);
                 return height;
             },
             calcFontSize: function (current) {
-                return window.getComputedStyle(current).fontSize.replace('px', '');
+                return this.utilPx(window.getComputedStyle(current).fontSize);
             },
             calcLineHeight: function (current) {
                 var lineheight,
@@ -48,15 +54,23 @@
                     return lineheight;
                 }
                 height = this.calcHeight(current);
-                fontsize = this.calcFontSize(current).replace('px', '');
+                fontsize = this.calcFontSize(current);
                 lineheight = height / fontsize;
                 return lineheight;
             },
+            calcPaddingTop: function (current) {
+                return this.utilPx(window.getComputedStyle(current).paddingTop) +
+                    this.utilPx(window.getComputedStyle(current).borderTopWidth);
+            },
+            calcPaddingBottom: function (current) {
+                return this.utilPx(window.getComputedStyle(current).paddingBottom) +
+                    this.utilPx(window.getComputedStyle(current).borderBottomWidth);
+            },
             calcMarginTop: function (current) {
-                return window.getComputedStyle(current).marginTop.replace('px', '');
+                return this.utilPx(window.getComputedStyle(current).marginTop);
             },
             calcMarginBottom: function (current) {
-                return window.getComputedStyle(current).marginBottom.replace('px', '');
+                return this.utilPx(window.getComputedStyle(current).marginBottom);
             },
             checkBaseline: function (current) {
                 if (this.calcHeight(current) %
@@ -65,6 +79,32 @@
                     return true;
                 }
                 current.style.backgroundColor = 'red';
+                return false;
+            },
+            paddingTop: function (current) {
+                if (this.calcPaddingTop(current) %
+                        this.settings.desiredBaseline === 0 || this.calcPaddingTop(current) === 0) {
+                    return true;
+                }
+                return false;
+            },
+            paddingBottom: function (current) {
+                if (this.calcPaddingBottom(current) %
+                        this.settings.desiredBaseline === 0 || this.calcPaddingBottom(current) === 0) {
+                    return true;
+                }
+                return false;
+            },
+            checkPadding: function (current) {
+                if (this.paddingTop(current) && this.paddingBottom(current)) {
+                    current.style.fontWeight = '500';
+                    return true;
+                }
+                if (this.paddingTop(current) || this.paddingBottom(current)) {
+                    current.style.fontWeight = '700';
+                } else {
+                    current.style.fontWeight = '900';
+                }
                 return false;
             },
             marginTop: function (current) {
@@ -108,7 +148,7 @@
                     // (max of three decimal places)
                     return proposeHeightMult;
                 }
-                return proposeHeightPx + 'px';
+                return proposeHeightPx + 'px (ideally change the font-size first)';
             },
             consoleOutput: function (tag, current) {
                 console.log(tag + ' is ' + this.calcHeight(current) + 'px high' +
@@ -116,8 +156,8 @@
                     ', and its font-size is ' + this.calcFontSize(current) + 'px ' +
                     ', and the line-height is ' + this.calcLineHeight(current) +
                     ', a match is ' + this.checkBaseline(current) +
-                    ', and its top margin is ' + this.calcMarginTop(current) +
-                    ', and a margin match is ' + this.checkMargin(current));
+                    ', and a margin match is ' + this.checkMargin(current) +
+                    ', and a padding match is ' + this.checkPadding(current));
             },
             displayOutput: function (tag, current) {
                 this.checkBaseline(current);

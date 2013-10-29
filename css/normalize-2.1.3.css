@@ -404,20 +404,34 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+/*
+*, body, h1 {
+  margin: 0;
+}
 
-/*h1{
-  line-height: 44px;
-}*/
+h1{
+  line-height: 2;
+  font-size: 2em;
+  padding: 0.75em 0;
+}
 
-/*h1, h2, p{
-  line-height: 1.375;
+h2, h3, p{
+  line-height: 2;
+}
+
+h3{
+  font-size: 1em;
 }
 
 small{
-  display: inline-block;
-  line-height: 22px;
-}*/
+  font-size: .75em;
+  line-height: 16px;
+}
 
+li{
+  line-height: 2;
+}
+*/
 /**, body, h1 {margin: 0;}
 
 body{
