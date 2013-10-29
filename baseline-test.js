@@ -6,28 +6,28 @@
             settings: {
                 // Define what tags to run it on, and what baseline we are trying to achieve.
                 tags: ['h1', 'h2', 'h3', 'p', 'small', 'li', 'tc', 'span'],
-                desiredBaseline: 18
+                desiredBaseline: 18,
+                container: '.container'
             },
             init: function () {
                 var i = 0,
                     tags = this.settings.tags,
                     current;
                 while (i < tags.length) {
-                    current = this.getCurrent(tags[i]);
-                    if (current === undefined) {
-                        return null;
+                    current = this.getCurrent(this.settings.container, tags[i]);
+                    if (current !== undefined) {
+                        // Can only read inline element's height if they
+                        // are inline blocks, this converts them.
+                        if (window.getComputedStyle(current).display === 'inline') {
+                            current.style.display = 'inline-block';
+                        }
+                        this.consoleOutput(tags[i], current);
                     }
-                    // Can only read inline element's height if they
-                    // are inline blocks, this converts them.
-                    if (window.getComputedStyle(current).display === "inline") {
-                        current.style.display = "inline-block";
-                    }
-                    this.displayOutput(tags[i], current);
                     i += 1;
                 }
             },
-            getCurrent: function (tag) {
-                return document.getElementsByTagName(tag)[0];
+            getCurrent: function (container, tag) {
+                return document.querySelectorAll(container + " " + tag)[0];
             },
             calcHeight: function (current) {
                 var height;
@@ -101,7 +101,7 @@
                 var proposeHeightPx,
                     proposeHeightMult;
                 if (this.checkBaseline(current) === true) {
-                    return "already correct";
+                    return 'already correct';
                 }
                 proposeHeightPx = ((Math.ceil(this.calcHeight(current) /
                     this.settings.desiredBaseline)) *
@@ -133,4 +133,4 @@
 }());
 
 // Report everything as EMs
-// Handle padding
+// Handle padding and borders as one element.
