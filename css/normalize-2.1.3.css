@@ -418,7 +418,7 @@ small{
   line-height: 22px;
 }*/
 
-*, body, h1 {margin: 0;}
+/**, body, h1 {margin: 0;}
 
 body{
   line-height: 1.4;
@@ -442,4 +442,4 @@ p{
 }
 small{
   line-height: 18px;
-}
+}*/

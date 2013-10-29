@@ -21,7 +21,7 @@
                         if (window.getComputedStyle(current).display === 'inline') {
                             current.style.display = 'inline-block';
                         }
-                        this.consoleOutput(tags[i], current);
+                        this.displayOutput(tags[i], current);
                     }
                     i += 1;
                 }
@@ -32,13 +32,8 @@
             },
             calcHeight: function (current) {
                 var height;
-                // Best option if browser supports getBoundingClientRect
-                if (current.getBoundingClientRect().top !== null) {
-                    height = current.getBoundingClientRect().bottom -
-                        current.getBoundingClientRect().top;
-                    return height;
-                }
-                height = current.offsetHeight; // Fallback option
+                height = current.getBoundingClientRect().bottom -
+                    current.getBoundingClientRect().top;
                 return height;
             },
             calcFontSize: function (current) {
@@ -133,5 +128,4 @@
     BaselineTest.init(); // Call itself
 }());
 
-// Report everything as EMs
 // Handle padding and borders as one element.
