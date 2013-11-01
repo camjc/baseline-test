@@ -438,7 +438,7 @@ small{
 }
 
 h1{ position: static;} 
-h1{ line-height: 1.5;} 
+h1{ line-height: 1.4;} 
 h2{ margin-top: 32px /* ideally change the font-size first */;} 
 h2{ margin-bottom: 32px /* ideally change the font-size first */;} 
 h3{ margin-top: 32px /* ideally change the font-size first */;} 
