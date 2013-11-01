@@ -10,3 +10,5 @@ Set desired baseline in settings (in pixels).
 You can also give it a container so that it only looks at part of a page.
 
 You can call Baseline Test directly in the console using BaselineTest.check(" css selector ");
+
+Let me know if you find this useful.
