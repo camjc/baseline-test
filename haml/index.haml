@@ -15,13 +15,24 @@
 			%p
 				Paragraph of text.
 			%p
-				Paragraph of text.
+				%a{:href => ''}
+					A Link.
+			%ul
+				%li
+					List element one
+				%li
+					List element two
+			%ol
+				%li
+					Ordered List element one
+				%li
+					Ordered List element two
+			%code
+				Some Code.
+			%cite
+				A citation.
 	%footer
 		%small
 			Fine Print
-		%ul
-			%li
-				List element one
-			%li
-				List element two
-	%script{:src  => "baseline-test-ck.js"}
+
+	%script{:src  => "js/baseline-test.js"}
