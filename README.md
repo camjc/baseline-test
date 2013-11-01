@@ -1,4 +1,4 @@
-Baseline Tester
+Baseline Test
 ===============
 
 Tests page elements to see if they align to a vertical baseline grid.
