@@ -125,7 +125,6 @@ var BaselineTest = (function () {
         checkBaseline: function (current) {
             if (this.calcHeight(current) %
                     this.settings.desiredBaseline === 0) {
-                current.style.color = 'PaleGreen';
                 return true;
             }
             current.style.color = 'Salmon';
@@ -139,7 +138,6 @@ var BaselineTest = (function () {
         },
         checkPadding: function (current) {
             if (this.paddingTop(current) && this.paddingBottom(current)) {
-                current.style.backgroundColor = 'Green';
                 return true;
             }
             if (this.paddingTop(current) || this.paddingBottom(current)) {
@@ -157,7 +155,6 @@ var BaselineTest = (function () {
         },
         checkMargin: function (current) {
             if (this.marginTop(current) && this.marginBottom(current)) {
-                current.style.opacity = '1';
                 return true;
             }
             if (this.marginTop(current) || this.marginBottom(current)) {

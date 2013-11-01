@@ -1,10 +1,12 @@
 Baseline Test
 ===============
 
-Tests page elements to see if they align to a vertical baseline grid.
+Baseline Test checks page elements to see if they align to a vertical baseline grid.
+It will then propose changes (in the console) to CSS to fix alignment,
+and highlight any checked elements that don't conform to the desired baseline.
 
-Proposes changes to CSS to fix alignment.
+Pass selectors to check into the array in settings.
+Set desired baseline in settings (in pixels).
+You can also give it a container so that it only looks at part of a page.
 
-Takes parameters of a tags to check, a proposed baseline, and a container.
-
-Can call directly in console using BaselineTest.check(" css selector ");
+You can call Baseline Test directly in the console using BaselineTest.check(" css selector ");
