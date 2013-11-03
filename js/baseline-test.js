@@ -8,11 +8,12 @@ var BaselineTest = (function () {
             tags            : ['h1', 'h2', 'h3', 'p', 'small', 'ul li', 'ol li', 'tc', 'span', 'img', 'a', 'cite', 'code'],
             desiredBaseline : 16,
             container       : 'body',
-            output          : []
+            proposals       : ''
         },
         init: function () {
             var i = 0,
                 tags = this.settings.tags;
+            document.body.insertAdjacentHTML('beforeend', '<div id="baseline-display" style="position: absolute; top: 50%; left: 50%; width: 320px; height: 200px; margin-top: -100px; margin-left: -100px; background: whitesmoke; box-shadow: 0 0 1px gray; "></div>');
             while (i < tags.length) {
                 this.check(tags[i]);
                 i += 1;
@@ -73,8 +74,9 @@ var BaselineTest = (function () {
             var changes;
             if (what !== true) {
                 changes = tag + '{ ' + name + ': ' + what + ';}';
-                // document.getElementByTag('body')[0].insertBefore('<style>' + changes + '</style>');
-                return console.log(changes);
+                // document.getElementsByTagName('head')[0].insertAdjacentHTML('beforeend', '<style>' + changes + '</style>');
+                this.settings.proposals += changes;
+                // return changes;
             }
         },
         calcPosition: function (current) {
@@ -203,4 +205,5 @@ var BaselineTest = (function () {
     };
 }());
 BaselineTest.init(); // Call itself
-
+document.getElementById('baseline-display').insertAdjacentHTML('beforeend', BaselineTest.settings.proposals);
+//Choose what functions should be private and which should be public.

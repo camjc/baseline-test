@@ -406,11 +406,11 @@ table {
 }
 
 h1{
-  line-height: 2.5rem;
+  line-height: 1.5rem;
   margin-top: 1em;
   margin-bottom: 1em;
-  border-top: red solid 0.25em;
-  border-bottom: blue solid 0.67em;
+  border-top: gray solid 0.25em;
+  border-bottom: #ccc solid 0.67em;
   padding-top: 0.75em;
   padding-bottom: 27px;
   position: relative;
@@ -436,13 +436,3 @@ small{
 * {
   box-sizing: border-box;
 }
-
-h1{ position: static;} 
-h1{ line-height: 1.4;} 
-h2{ margin-top: 32px /* ideally change the font-size first */;} 
-h2{ margin-bottom: 32px /* ideally change the font-size first */;} 
-h3{ margin-top: 32px /* ideally change the font-size first */;} 
-h3{ margin-bottom: 32px /* ideally change the font-size first */;} 
-li{ line-height: 2;} 
-cite{ line-height: 2;} 
-code{ line-height: 2;} 
