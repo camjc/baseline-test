@@ -8,12 +8,13 @@ var BaselineTest = (function () {
             tags            : ['h1', 'h2', 'h3', 'p', 'small', 'ul li', 'ol li', 'tc', 'span', 'img', 'a', 'cite', 'code'],
             desiredBaseline : 16,
             container       : 'body',
-            proposals       : ''
+            proposals       : [],
+            proposalTags    : []
         },
         init: function () {
             var i = 0,
                 tags = this.settings.tags;
-            document.body.insertAdjacentHTML('beforeend', '<div id="baseline-display" style="position: absolute; top: 50%; left: 50%; width: 320px; height: 200px; margin-top: -100px; margin-left: -100px; background: whitesmoke; box-shadow: 0 0 1px gray; "></div>');
+            document.body.insertAdjacentHTML('beforeend', '<div id="baseline-display" style="position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; margin-top: -200px; margin-left: -200px; background: whitesmoke; box-shadow: 0 0 1px gray; "></div>');
             while (i < tags.length) {
                 this.check(tags[i]);
                 i += 1;
@@ -71,12 +72,21 @@ var BaselineTest = (function () {
             return proposeHeightPx + 'px /* ideally change the font-size first */';
         },
         utilPrinter: function (tag, name, what) {
-            var changes;
+            var changes,
+                alreadyChanges,
+                array = this.settings.proposalTags;
             if (what !== true) {
                 changes = tag + '{ ' + name + ': ' + what + ';}';
+                alreadyChanges = name + ': ' + what + ';}';
                 // document.getElementsByTagName('head')[0].insertAdjacentHTML('beforeend', '<style>' + changes + '</style>');
-                this.settings.proposals += changes;
-                // return changes;
+                if (array.indexOf(tag) !== -1) {
+                    this.settings.proposals[array.indexOf(tag)] = this.settings.proposals[array.indexOf(tag)].replace('}', ' ');
+                    this.settings.proposals[array.indexOf(tag)] += alreadyChanges;
+                    return changes;
+                }
+                this.settings.proposalTags.push(tag);
+                this.settings.proposals.push(changes);
+                return changes;
             }
         },
         calcPosition: function (current) {
@@ -201,9 +211,14 @@ var BaselineTest = (function () {
             this.utilPrinter(tag, 'line-height', this.proposeHeight(current));
             this.utilPrinter(tag, 'padding-bottom', this.proposePaddingBottom(current));
             this.utilPrinter(tag, 'margin-bottom', this.proposeMarginBottom(current));
+        },
+        displayAllOutput: function () {
+            var output = this.settings.proposals;
+            output = output.join("<br/><br/>");
+            document.getElementById('baseline-display').insertAdjacentHTML('beforeend', output);
         }
     };
 }());
 BaselineTest.init(); // Call itself
-document.getElementById('baseline-display').insertAdjacentHTML('beforeend', BaselineTest.settings.proposals);
+BaselineTest.displayAllOutput();
 //Choose what functions should be private and which should be public.
