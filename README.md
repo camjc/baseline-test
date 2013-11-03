@@ -11,4 +11,6 @@ You can also give it a container so that it only looks at part of a page.
 
 You can call Baseline Test directly in the console using BaselineTest.check(" css selector ");
 
+Zero dependencies, just vanilla javascript (Modern browsers only though).
+
 Let me know if you find this useful.
