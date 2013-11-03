@@ -14,7 +14,6 @@ var BaselineTest = (function () {
         init: function () {
             var i = 0,
                 tags = this.settings.tags;
-            document.body.insertAdjacentHTML('beforeend', '<div id="baseline-display" style="position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; margin-top: -200px; margin-left: -200px; background: whitesmoke; box-shadow: 0 0 1px gray; "></div>');
             while (i < tags.length) {
                 this.check(tags[i]);
                 i += 1;
@@ -44,7 +43,6 @@ var BaselineTest = (function () {
         },
         utilSelector: function (container, tag) {
             return document.querySelectorAll(container + " " + tag)[0];
-            //Should change to .body.querySelector() for efficiency
         },
         utilPropose: function (check, propose, current, unit, remove) {
             var proposeHeightPx,
@@ -214,8 +212,13 @@ var BaselineTest = (function () {
         },
         displayAllOutput: function () {
             var output = this.settings.proposals;
-            output = output.join("<br/><br/>");
-            document.getElementById('baseline-display').insertAdjacentHTML('beforeend', output);
+            if (output.length === 0) {
+                output = 'Everything you checked is fine.';
+            } else {
+                output = output.join("<br/><br/>");
+            }
+            output = '<div id="baseline-display" style="margin: 2em 0; padding: 1em; background: whitesmoke; box-shadow: 0 0 1px gray; ">' + output + '</div>';
+            document.body.insertAdjacentHTML('beforeend', output);
         }
     };
 }());
