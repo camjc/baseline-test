@@ -1,6 +1,6 @@
 /*global console, document, window */
 // Using Module Syntax
-var BaselineTest = (function () {
+let BaselineTest = (function () {
     'use strict';
     return {
         settings: {
@@ -12,7 +12,7 @@ var BaselineTest = (function () {
             proposalTags    : []
         },
         init: function () {
-            var i = 0,
+            let i = 0,
                 tags = this.settings.tags;
             while (i < tags.length) {
                 this.check(tags[i]);
@@ -20,9 +20,9 @@ var BaselineTest = (function () {
             }
         },
         check: function (tag) {
-            var current = this.utilSelector(this.settings.container, tag);
+            let current = this.utilSelector(this.settings.container, tag);
             if (current === undefined) {
-                return "That element doesn't exist on this page.";
+                return "That element doesn’t exist on this page.";
             }
             // Can only read inline element's height if they
             // are inline blocks, this converts them.
@@ -36,16 +36,13 @@ var BaselineTest = (function () {
             return parseInt(input.replace('px', ''), 10);
         },
         utilCheck: function (input) {
-            if (input % this.settings.desiredBaseline === 0 || input === 0) {
-                return true;
-            }
-            return false;
+            return (input % this.settings.desiredBaseline === 0 || input === 0)
         },
         utilSelector: function (container, tag) {
             return document.querySelectorAll(container + " " + tag)[0];
         },
         utilPropose: function (check, propose, current, unit, remove) {
-            var proposeHeightPx,
+            let proposeHeightPx,
                 proposeHeightMult;
             if (check === true) {
                 return true;
@@ -70,7 +67,7 @@ var BaselineTest = (function () {
             return proposeHeightPx + 'px /* ideally change the font-size first */';
         },
         utilPrinter: function (tag, name, what) {
-            var changes,
+            let changes,
                 alreadyChanges,
                 array = this.settings.proposalTags;
             if (what !== true) {
@@ -94,25 +91,22 @@ var BaselineTest = (function () {
             return true;
         },
         calcHeight: function (current) {
-            var height;
-            height = current.getBoundingClientRect().bottom -
+            return current.getBoundingClientRect().bottom -
                 current.getBoundingClientRect().top -
                 this.calcPaddingTop(current) -
                 this.calcPaddingBottom(current) -
                 this.calcBorderTop(current) -
                 this.calcBorderBottom(current);
-            return height;
         },
         calcFontSize: function (current) {
             return this.utilPx(window.getComputedStyle(current).fontSize);
         },
         calcLineHeight: function (current) {
-            var lineheight = window.getComputedStyle(current).lineHeight;
+            const lineheight = window.getComputedStyle(current).lineHeight;
             if (lineheight !== 'normal') {
                 return lineheight;
             }
-            lineheight = this.calcHeight(current) / this.calcFontSize(current);
-            return lineheight;
+            return this.calcHeight(current) / this.calcFontSize(current);
         },
         calcBorderTop: function (current) {
             return this.utilPx(window.getComputedStyle(current).borderTopWidth);
@@ -211,7 +205,7 @@ var BaselineTest = (function () {
             this.utilPrinter(tag, 'margin-bottom', this.proposeMarginBottom(current));
         },
         displayAllOutput: function () {
-            var output = this.settings.proposals;
+            let output = this.settings.proposals;
             if (output.length === 0) {
                 output = 'Everything you checked is fine.';
             } else {
